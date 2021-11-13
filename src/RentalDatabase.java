@@ -50,6 +50,12 @@ public class RentalDatabase {
 				return results;
 			} catch (SQLException e) {
 				e.printStackTrace();
+				while (e != null) {
+					System.out.println("SQL Exception Code " + e.getErrorCode());
+					System.out.println("SQLState " + e.getSQLState());
+					System.out.println("Error Message " + e.getMessage());
+					e = e.getNextException();
+				}
 			} finally {
 				try {
 					if (stmt != null) {
@@ -77,6 +83,12 @@ public class RentalDatabase {
 				return rowsUpdated;
 			} catch (SQLException e) {
 				e.printStackTrace();
+				while (e != null) {
+					System.out.println("SQL Exception Code " + e.getErrorCode());
+					System.out.println("SQLState " + e.getSQLState());
+					System.out.println("Error Message " + e.getMessage());
+					e = e.getNextException();
+				}
 			} finally {
 				try {
 					if (stmt != null) {
