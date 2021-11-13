@@ -38,6 +38,9 @@ public class RentalSystem {
 					case 2:
 						System.out.println("Starting function 2");
 						break;
+					case 3:
+						System.out.println("Starting function 3");
+						break;
 					default:
 						isValidFunctionMode = false;
 						System.out.println("You have entered an invalid function mode.");

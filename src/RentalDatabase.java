@@ -7,7 +7,7 @@ import java.sql.*;
  *
  */
 public class RentalDatabase {
-	private Connection connection;
+	private Connection connection = null;
 	
 	public RentalDatabase() {
 		try {
@@ -17,8 +17,22 @@ public class RentalDatabase {
 			e.printStackTrace();
 		}
 
-		if (connection == null) {
+		if (this.connection == null) {
 			System.out.println("Failed to make connection.");
+		}
+	}
+	
+	public boolean isConnected() {
+		return this.connection != null;
+	}
+	
+	public void close() {
+		try {
+			if (this.connection != null) {
+				this.connection.close();
+			}
+		} catch (SQLException e) {
+			// Can't do anything here
 		}
 	}
 	
@@ -28,13 +42,22 @@ public class RentalDatabase {
 	 * @return ResultSet - results from SELECT statement on database
 	 */
 	public ResultSet executeQuery(String sql) {
-		if (connection != null) {
+		Statement stmt = null;
+		if (this.connection != null) {
 			try {
-				Statement stmt = this.connection.createStatement();
+				stmt = this.connection.createStatement();
 				ResultSet results = stmt.executeQuery(sql);
 				return results;
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					if (stmt != null) {
+						stmt.close();
+					}
+				} catch (SQLException e2) {
+					// Can't do anything here
+				}
 			}
 		}
 		return null;
@@ -46,13 +69,22 @@ public class RentalDatabase {
 	 * @return integer - number of rows updated by DML statement
 	 */
 	public int executeUpdate(String sql) {
+		Statement stmt = null;
 		if (connection != null) {
 			try {
-				Statement stmt = this.connection.createStatement();
+				stmt = this.connection.createStatement();
 				int rowsUpdated = stmt.executeUpdate(sql);
 				return rowsUpdated;
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					if (stmt != null) {
+						stmt.close();
+					}
+				} catch (SQLException e2) {
+					// Can't do anything here
+				}
 			}
 		}
 		return 0;
