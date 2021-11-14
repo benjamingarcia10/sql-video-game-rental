@@ -2,9 +2,9 @@ import java.util.Scanner;
 
 public class RentalSystem {
 	private static String[] validFunctionCommands = new String[] {
-		"1. Function 1",
-		"2. Function 2",
-		"3. Function 3",
+		"1. View all games",
+		"2. View games by genre",
+		"3. View games by publisher",
 		"9. Exit"
 	};
 	private static int EXIT_FUNCTION_MODE = 9;
@@ -20,6 +20,7 @@ public class RentalSystem {
 	}
 	
 	public static void main(String[] args) {
+		RentalDatabase db = new RentalDatabase();
 		Scanner in = new Scanner(System.in);
 		while(true) {
 			try {
