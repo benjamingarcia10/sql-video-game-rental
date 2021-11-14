@@ -27,7 +27,7 @@ CREATE TABLE `games` (
   `platform_id` int NOT NULL,
   `release_year` int NOT NULL,
   `game_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `game_description` text COLLATE utf8mb4_unicode_ci,
+  `game_description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`game_id`),
   KEY `genre_id` (`genre_id`),
   KEY `publisher_id` (`publisher_id`),

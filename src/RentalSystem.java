@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class RentalSystem {
@@ -34,13 +35,37 @@ public class RentalSystem {
 				}
 				switch (functionMode) {
 					case 1:
-						System.out.println("Starting function 1");
+						ArrayList<VideoGame> games = db.getAllGames();
+						System.out.println("\nAll games:");
+						for (VideoGame game: games) {
+							System.out.printf("%d: %s (%d) - %s\n", game.getGameId(), game.getGameName(), game.getReleaseYear(), game.getGameDescription());
+						}
 						break;
 					case 2:
-						System.out.println("Starting function 2");
+						System.out.print("Enter the genre name: ");
+						String genre = in.nextLine().trim();
+						ArrayList<VideoGame> genreGames = db.getAllGamesByGenre(genre);
+						if (genreGames.size() > 0) {
+							System.out.printf("\nAll games for genre: %s\n", genre);
+							for (VideoGame game: genreGames) {
+								System.out.printf("%d: %s (%d) - %s\n", game.getGameId(), game.getGameName(), game.getReleaseYear(), game.getGameDescription());
+							}
+						} else {
+							System.out.printf("No games found for genre: %s\n", genre);
+						}
 						break;
 					case 3:
-						System.out.println("Starting function 3");
+						System.out.print("Enter the publisher name: ");
+						String publisher = in.nextLine().trim();
+						ArrayList<VideoGame> publisherGames = db.getAllGamesByPublisher(publisher);
+						if (publisherGames.size() > 0) {
+							System.out.printf("\nAll games for publisher: %s\n", publisher);
+							for (VideoGame game: publisherGames) {
+								System.out.printf("%d: %s (%d) - %s\n", game.getGameId(), game.getGameName(), game.getReleaseYear(), game.getGameDescription());
+							}
+						} else {
+							System.out.printf("No games found for publisher: %s\n", publisher);
+						}
 						break;
 					default:
 						isValidFunctionMode = false;
@@ -48,7 +73,10 @@ public class RentalSystem {
 						break;
 				}
 				if (isValidFunctionMode) {
-					System.out.printf("Successfully completed function mode %d\n", functionMode);
+					System.out.print("Would you like to perform another action? (y/n): ");
+					String continueString = in.nextLine().trim().toLowerCase();
+					if (continueString.equals("n")) break;
+					System.out.print("\n\n\n");
 				}
 			} catch (NumberFormatException e) {
 				System.out.println("You have entered an invalid number.");
