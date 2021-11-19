@@ -24,25 +24,25 @@ CREATE TABLE `games` (
   `game_id` int NOT NULL AUTO_INCREMENT,
   `genre_id` int NOT NULL,
   `publisher_id` int NOT NULL,
-  `platform_id` int NOT NULL,
   `release_year` int NOT NULL,
   `game_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `game_description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`game_id`),
   KEY `genre_id` (`genre_id`),
   KEY `publisher_id` (`publisher_id`),
-  KEY `platform_id` (`platform_id`),
   CONSTRAINT `games_ibfk_1` FOREIGN KEY (`genre_id`) REFERENCES `genres` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `games_ibfk_2` FOREIGN KEY (`publisher_id`) REFERENCES `publishers` (`publisher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `games_ibfk_3` FOREIGN KEY (`platform_id`) REFERENCES `platforms` (`platform_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `games_ibfk_2` FOREIGN KEY (`publisher_id`) REFERENCES `publishers` (`publisher_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create inventory table
 CREATE TABLE `inventory` (
   `game_id` int NOT NULL,
+  `platform_id` int NOT NULL,
   `available_copies` int NOT NULL,
-  PRIMARY KEY (`game_id`),
-  CONSTRAINT `inventory_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  PRIMARY KEY (`game_id`,`platform_id`),
+  KEY `platform_id` (`platform_id`),
+  CONSTRAINT `inventory_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `inventory_ibfk_2` FOREIGN KEY (`platform_id`) REFERENCES `platforms` (`platform_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create users table

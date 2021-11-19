@@ -24,9 +24,9 @@ INSERT INTO genres (genre_id, genre_name) VALUES (4, 'Simulation');
 
 
 -- Load games data
-INSERT INTO games (game_id, genre_id, publisher_id, platform_id, release_year, game_name, game_description) VALUES (1, 1, 1, 1, 2020, 'Risk of Rain 2', 'Committing platentary genocide for fun');
-INSERT INTO games (game_id, genre_id, publisher_id, platform_id, release_year, game_name, game_description) VALUES (2, 1, 2, 1, 2020, 'Hades', 'A godlike roguelike');
-INSERT INTO games (game_id, genre_id, publisher_id, platform_id, release_year, game_name, game_description) VALUES (3, 2, 3, 1, 2018, 'Celeste', 'Overcoming mountains');
-INSERT INTO games (game_id, genre_id, publisher_id, platform_id, release_year, game_name, game_description) VALUES (4, 3, 4, 1, 2011, 'Dark Souls', 'Cursed pilgrimage simulator');
-INSERT INTO games (game_id, genre_id, publisher_id, platform_id, release_year, game_name, game_description) VALUES (5, 4, 6, 1, 2016, 'Stardew Valley', 'Farming simulator');
-INSERT INTO games (game_id, genre_id, publisher_id, platform_id, release_year, game_name, game_description) VALUES (6, 3, 5, 1, 2019, 'Fire Emblem: Three Houses', 'Play one of three tactical storylines');
+INSERT INTO games (game_id, genre_id, publisher_id, release_year, game_name, game_description) VALUES (1, 1, 1, 2020, 'Risk of Rain 2', 'Committing platentary genocide for fun');
+INSERT INTO games (game_id, genre_id, publisher_id, release_year, game_name, game_description) VALUES (2, 1, 2, 2020, 'Hades', 'A godlike roguelike');
+INSERT INTO games (game_id, genre_id, publisher_id, release_year, game_name, game_description) VALUES (3, 2, 3, 2018, 'Celeste', 'Overcoming mountains');
+INSERT INTO games (game_id, genre_id, publisher_id, release_year, game_name, game_description) VALUES (4, 3, 4, 2011, 'Dark Souls', 'Cursed pilgrimage simulator');
+INSERT INTO games (game_id, genre_id, publisher_id, release_year, game_name, game_description) VALUES (5, 4, 6, 2016, 'Stardew Valley', 'Farming simulator');
+INSERT INTO games (game_id, genre_id, publisher_id, release_year, game_name, game_description) VALUES (6, 3, 5, 2019, 'Fire Emblem: Three Houses', 'Play one of three tactical storylines');
