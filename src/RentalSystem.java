@@ -23,12 +23,12 @@ public class RentalSystem {
 		"13. Update a game entry",													// Done
 		"14. Add a user",															// Done
 		"15. Update a user entry",													// Done
-		"16. View entire inventory",												
-		"17. Add inventory",														
-		"18. Update inventory",														
-		"19. Delete a user and all their rentals",									
-		"20. View all users and their active (only unarchived) rental count",
-		"21. View all users and their entire rental count (including archived)",	
+		"16. View entire inventory",												// 
+		"17. Add inventory",														// 
+		"18. Update inventory",														// 
+		"19. Delete a user and all their rentals",									// Done
+		"20. View all users and their active (only unarchived) rental count",		// Done
+		"21. View users' entire rental count (including archived)",					// Done
 		"----------------------------------------",
 		"22. Exit"
 	};
@@ -273,6 +273,27 @@ public class RentalSystem {
 						} else {
 							System.out.println("User update unsuccessful.");
 						}
+						System.out.println();
+						break;
+					case 19:
+						userId = getUserIntegerInput(in, "Enter user id to delete and all their associated rentals: ",
+								"You have entered an invalid number. Enter user id to delete and all their associated rentals: ");
+						System.out.println();
+						if (Rental.DatabaseOperations.deleteRentalsAndUserByUserId(db, userId)) {
+							System.out.println("User and associated rentals successfully deleted.");
+						} else {
+							System.out.println("User and associated rentals deletion unsuccessful.");
+						}
+						System.out.println();
+						break;
+					case 20:
+						System.out.println();
+						Rental.DatabaseOperations.getAllUsersActiveUnarchivedRentalCount(db);
+						System.out.println();
+						break;
+					case 21:
+						System.out.println();
+						Rental.DatabaseOperations.getAllUsersRentalCountIncludingArchived(db);
 						System.out.println();
 						break;
 					default:
