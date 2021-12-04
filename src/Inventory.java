@@ -55,41 +55,46 @@ public class Inventory {
 		public static void getAvailableInventory(RentalDatabase db) throws SQLException {
 			if (db.isConnected()) {
 				Statement stmt = db.getConnection().createStatement();
-				if (stmt != null) {
-					ResultSet rs = stmt.executeQuery("SELECT games.*, platform_name, available_copies FROM games, platforms, inventory WHERE inventory.game_id = games.game_id AND inventory.platform_id = platforms.platform_id AND available_copies > 0;");
-					
-					int rowCount = 0;
-					while(rs.next()) {
-						rowCount++;
-						if (rowCount == 1) {
-							System.out.println("Games Available to Rent:");
-						}
-						System.out.printf("- %s (%d) (%s): %d copies available\n", rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
+				ResultSet rs = stmt.executeQuery("SELECT inventory_id, games.*, platform_name, available_copies FROM games, platforms, inventory WHERE inventory.game_id = games.game_id AND inventory.platform_id = platforms.platform_id AND available_copies > 0;");
+				
+				int rowCount = 0;
+				while(rs.next()) {
+					rowCount++;
+					if (rowCount == 1) {
+						System.out.println("Games Available to Rent:");
 					}
-					if (rowCount == 0) {
-						System.out.println("No games available to rent.");
+					if (rs.getInt("available_copies") == 1) {
+						System.out.printf("- ID %d: %s (%d) (%s): %d copy available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
+					} else {
+						System.out.printf("- ID %d: %s (%d) (%s): %d copies available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
 					}
+				}
+				if (rowCount == 0) {
+					System.out.println("No games available to rent.");
 				}
 			}
 		}
 		
-		public static void getAvailableInventoryByGameName(RentalDatabase db, String gameName) throws SQLException {
+		public static void getAvailableInventoryByGameName(RentalDatabase db, String gameName) throws SQLException {			
 			if (db.isConnected()) {
-				PreparedStatement ps = db.getConnection().prepareStatement("SELECT games.*, platform_name, available_copies FROM games, platforms, inventory WHERE games.game_name = ? AND inventory.game_id = games.game_id AND inventory.platform_id = platforms.platform_id AND available_copies > 0;");
-				if (ps != null) {
-					ResultSet rs = ps.executeQuery("SELECT games.*, platform_name, available_copies FROM games, platforms, inventory WHERE inventory.game_id = games.game_id AND inventory.platform_id = platforms.platform_id AND available_copies > 0;");
-					
-					int rowCount = 0;
-					while(rs.next()) {
-						rowCount++;
-						if (rowCount == 1) {
-							System.out.println("Games Available to Rent:");
-						}
-						System.out.printf("- %s (%d) (%s): %d copies available\n", rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT inventory_id, games.*, platform_name, available_copies FROM games, platforms, inventory WHERE games.game_name = ? AND inventory.game_id = games.game_id AND inventory.platform_id = platforms.platform_id AND available_copies > 0;");
+				ps.setString(1, gameName);
+				ResultSet rs = ps.executeQuery();
+				
+				int rowCount = 0;
+				while(rs.next()) {
+					rowCount++;
+					if (rowCount == 1) {
+						System.out.println("Games Available to Rent Matching: " + gameName);
 					}
-					if (rowCount == 0) {
-						System.out.println("No games available to rent.");
+					if (rs.getInt("available_copies") == 1) {
+						System.out.printf("- ID %d: %s (%d) (%s): %d copy available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
+					} else {
+						System.out.printf("- ID %d: %s (%d) (%s): %d copies available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
 					}
+				}
+				if (rowCount == 0) {
+					System.out.println("No games available to rent matching: " + gameName);
 				}
 			}
 		}

@@ -76,6 +76,25 @@ public class Game {
 			return null;
 		}
 		
+		public static boolean updateGameById(RentalDatabase db, int gameId, int newGameId, int newGenreId, int newPublisherId, int newReleaseYear, String newGameName, String newGameDescription) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("UPDATE games SET game_id = ?, genre_id = ?, publisher_id = ?, release_year = ?, game_name = ?, game_description = ? WHERE game_id = ?;");
+				ps.setInt(1, newGameId);
+				ps.setInt(2, newGenreId);
+				ps.setInt(3, newPublisherId);
+				ps.setInt(4, newReleaseYear);
+				ps.setString(5, newGameName);
+				ps.setString(6, newGameDescription);
+				ps.setInt(7, gameId);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
 		/**
 		 * Helper to print games ArrayList
 		 * @param games - Games to print out
@@ -86,7 +105,7 @@ public class Game {
 			if (games.size() > 0) {
 				System.out.println(headerString);
 				for (Game game: games) {
-					System.out.printf("- %d: %s (%d) - %s\n", game.getGameId(), game.getGameName(), game.getReleaseYear(), game.getGameDescription());
+					System.out.printf("- ID %d: %s (%d) - %s\n", game.getGameId(), game.getGameName(), game.getReleaseYear(), game.getGameDescription());
 				}
 			} else {
 				System.out.println(emptyString);
@@ -150,7 +169,7 @@ public class Game {
 				PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM games");
 				games = getGamesByPreparedStatement(ps);
 			}
-			printGamesArrayList(games, "All games:", "No games found.");
+			printGamesArrayList(games, "All Games:", "No games found.");
 		}
 		
 		/**
@@ -168,7 +187,7 @@ public class Game {
 //				ps.setString(1, genre);
 //				games = getGamesByPreparedStatement(ps);
 			}
-			printGamesArrayList(genreGames, "All games for genre: " + genre, "No games found for genre: " + genre);
+			printGamesArrayList(genreGames, "All Games for Genre: " + genre, "No games found for genre: " + genre);
 		}
 		
 		/**
@@ -186,7 +205,7 @@ public class Game {
 //				ps.setString(1, publisher);
 //				games = getGamesByPreparedStatement(ps);
 			}
-			printGamesArrayList(publisherGames, "All games for publisher: " + publisher, "No games found for publisher: " + publisher);
+			printGamesArrayList(publisherGames, "All Games for Publisher: " + publisher, "No games found for publisher: " + publisher);
 		}
 		
 		/**
@@ -206,7 +225,7 @@ public class Game {
 				while(rs.next()) {
 					rowCount++;
 					if (rowCount == 1) {
-						System.out.println("Number of games released on or after: " + year);
+						System.out.println("Number of Games Released on or After: " + year);
 					}
 					System.out.printf("- %d: %d games\n", rs.getInt("release_year"), rs.getInt("count"));
 				}
