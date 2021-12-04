@@ -69,19 +69,6 @@ INSERT INTO users (name, allowed_rentals) VALUES ("Hero", 0);
 INSERT INTO users (name, allowed_rentals) VALUES ("Basil", 0);
 
 
--- Load rental data
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (1, 1, '2021-12-03', 10);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (2, 3, '1999-07-10', 4);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (3, 4, '1983-12-05', 1);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (4, 5, '2012-12-31', 30);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (5, 7, '2000-11-09', 365);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (6, 8, '2021-10-03', 30);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (7, 9, '9999-02-28', 2);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (8, 10, '2001-12-03', 100);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (9, 11, '1990-12-03', 1);
-INSERT INTO rentals (user_id, game_id, rented_at, rental_length) VALUES (10, 12, '1999-12-03', 999);
-
-
 -- Load inventory data
 INSERT INTO inventory (game_id, platform_id, available_copies) VALUES (1, 1, 100);
 INSERT INTO inventory (game_id, platform_id, available_copies) VALUES (1, 2, 10);
@@ -132,3 +119,16 @@ INSERT INTO inventory (game_id, platform_id, available_copies) VALUES (14, 7, 7)
 INSERT INTO inventory (game_id, platform_id, available_copies) VALUES (14, 8, 8);
 INSERT INTO inventory (game_id, platform_id, available_copies) VALUES (14, 9, 9);
 INSERT INTO inventory (game_id, platform_id, available_copies) VALUES (14, 10, 10);
+
+
+-- Load rental data
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (1, 1, '2021-12-03', 10);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (2, 3, '1999-07-10', 4);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (3, 4, '1983-12-05', 1);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (4, 5, '2012-12-31', 30);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (5, 7, '2000-11-09', 365);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (6, 8, '2021-10-03', 30);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (7, 9, '9999-02-28', 2);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (8, 10, '2001-12-03', 100);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (9, 11, '1990-12-03', 1);
+INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (10, 12, '1999-12-03', 999);
