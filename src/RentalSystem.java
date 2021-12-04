@@ -24,8 +24,8 @@ public class RentalSystem {
 		"14. Add a user",															// Done
 		"15. Update a user entry",													// Done
 		"16. View entire inventory",												// Done
-		"17. Add inventory",														// 
-		"18. Update inventory",														// 
+		"17. Add inventory",														// Done
+		"18. Update inventory",														// Done
 		"19. Delete a user and all their rentals (including archived)",				// Done
 		"20. View all users and their active (only unarchived) rental count",		// Done
 		"21. View users' entire rental count (including archived)",					// Done
@@ -102,9 +102,10 @@ public class RentalSystem {
 			
 			Game game;
 			User user;
+			Inventory inventory;
 			String gameName, newGameName, newGameDescription, newUserName, newPublisherName;
 			int year, userId, inventoryId, rentalLength, rentalId, gameId;
-			int newGameId, newGenreId, newPublisherId, newReleaseYear, newUserId, newAllowedRentals;
+			int newGameId, newGenreId, newPublisherId, newReleaseYear, newUserId, newAllowedRentals, newInventoryId, newPlatformId, newAvailableCopies;
 			
 			try {
 				// Perform actions based on user's selected function mode
@@ -278,6 +279,45 @@ public class RentalSystem {
 					case 16:
 						System.out.println();
 						Inventory.DatabaseOperations.getEntireInventory(db);
+						System.out.println();
+						break;
+					case 17:
+						newGameId = getUserIntegerInput(in, "Enter the game id you want to add to inventory: ",
+								"You have entered an invalid number. Enter the game id you want to add to inventory: ");
+						newPlatformId = getUserIntegerInput(in, "Enter the platform id of the game you want to add to inventory: ",
+								"You have entered an invalid number. Enter the platform id of the game you want to add to inventory: ");
+						newAvailableCopies = getUserIntegerInput(in, "Enter how many available copies you want to add to inventory: ",
+								"You have entered an invalid number. Enter how many available copies you want to add to inventory: ");
+						System.out.println();
+						if (Inventory.DatabaseOperations.addInventory(db, newGameId, newPlatformId, newAvailableCopies)) {
+							System.out.println("Inventory successfully added.");
+						} else {
+							System.out.println("Inventory add unsuccessful.");
+						}
+						System.out.println();
+						break;
+					case 18:
+						inventoryId = getUserIntegerInput(in, "Enter the inventory id you want to update: ",
+								"You have entered an invalid number. Enter the inventory id you want to update: ");
+						inventory = Inventory.DatabaseOperations.getInventoryById(db, inventoryId);
+						if (inventory == null) {
+							System.out.println("No inventory entry found for inventory id: " + inventoryId);
+							break;
+						}
+						newInventoryId = getUserIntegerInput(in, "Enter the desired new inventory id (original: " + inventory.getInventoryId() +"): ",
+								"You have entered an invalid number. Enter the desired new inventory id (original: " + inventory.getInventoryId() +"): ");
+						newGameId = getUserIntegerInput(in, "Enter the desired new game id (original: " + inventory.getGameId() +"): ",
+								"You have entered an invalid number. Enter the desired new game id (original: " + inventory.getGameId() +"): ");
+						newPlatformId = getUserIntegerInput(in, "Enter the desired new platform id (original: " + inventory.getPlatformId() +"): ",
+								"You have entered an invalid number. Enter the desired new platform id (original: " + inventory.getPlatformId() +"): ");
+						newAvailableCopies = getUserIntegerInput(in, "Enter the desired new available copies (original: " + inventory.getAvailableCopies() +"): ",
+								"You have entered an invalid number. Enter the desired new available copies (original: " + inventory.getAvailableCopies() +"): ");
+						System.out.println();
+						if (Inventory.DatabaseOperations.updateInventoryById(db, inventoryId, newInventoryId, newGameId, newPlatformId, newAvailableCopies)) {
+							System.out.println("Inventory successfully updated.");
+						} else {
+							System.out.println("Inventory update unsuccessful.");
+						}
 						System.out.println();
 						break;
 					case 19:

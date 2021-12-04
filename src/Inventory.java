@@ -121,5 +121,37 @@ public class Inventory {
 				}
 			}
 		}
+		
+		public static boolean updateInventoryById(RentalDatabase db, int inventoryId, int newInventoryId, int newGameId, int newPlatformId, int newAvailableCopies) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("UPDATE inventory SET inventory_id = ?, game_id = ?, platform_id = ?, available_copies = ? WHERE inventory_id = ?;");
+				ps.setInt(1, newInventoryId);
+				ps.setInt(2, newGameId);
+				ps.setInt(3, newPlatformId);
+				ps.setInt(4, newAvailableCopies);
+				ps.setInt(5, inventoryId);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static boolean addInventory(RentalDatabase db, int newGameId, int newPlatformId, int newAvailableCopies) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO inventory (game_id, platform_id, available_copies) VALUES (?, ?, ?);");
+				ps.setInt(1, newGameId);
+				ps.setInt(2, newPlatformId);
+				ps.setInt(3, newAvailableCopies);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
