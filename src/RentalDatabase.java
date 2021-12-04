@@ -1,5 +1,4 @@
 import java.sql.*;
-import java.util.ArrayList;
 
 /**
  * Rental Database class to instantiate a connection to the database defined in PrivateInformation.java
@@ -10,9 +9,30 @@ import java.util.ArrayList;
 public class RentalDatabase {
 	private Connection connection = null;
 	
+	private String[] triggerStrings = new String[] {
+		"DROP TRIGGER IF EXISTS RentGameTrigger;",
+		"CREATE TRIGGER RentGameTrigger AFTER INSERT ON rentals FOR EACH ROW BEGIN IF (NEW.is_returned = 0) THEN UPDATE inventory SET available_copies = available_copies - 1 WHERE inventory_id = NEW.inventory_id; END IF; END",
+		"DROP TRIGGER IF EXISTS ReturnGameTrigger;",
+		"CREATE TRIGGER ReturnGameTrigger AFTER UPDATE ON rentals FOR EACH ROW BEGIN IF (OLD.is_returned = 0 AND NEW.is_returned = 1) THEN UPDATE inventory SET available_copies = available_copies + 1 WHERE inventory_id = NEW.inventory_id; ELSEIF (OLD.is_returned = 1 AND NEW.is_returned = 0) THEN UPDATE inventory SET available_copies = available_copies - 1 WHERE inventory_id = NEW.inventory_id; END IF; END",
+	};
+	
+	private String[] procedureStrings = new String[] {
+		"DROP PROCEDURE IF EXISTS getGamesByGenreName;",
+		"CREATE PROCEDURE getGamesByGenreName(IN genreNameInput VARCHAR(100)) BEGIN SELECT * FROM games WHERE EXISTS (SELECT * FROM genres WHERE games.genre_id = genres.genre_id AND genre_name = genreNameInput); END",
+		"DROP PROCEDURE IF EXISTS getGamesByPublisherName;",
+		"CREATE PROCEDURE getGamesByPublisherName(IN publisherInput VARCHAR(100)) BEGIN SELECT games.* FROM games, publishers WHERE games.publisher_id = publishers.publisher_id AND publishers.publisher_name = publisherInput; END",
+		"DROP PROCEDURE IF EXISTS archiveRentals;",
+		"CREATE PROCEDURE archiveRentals(IN updateCutoff TIMESTAMP) BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; END; DECLARE EXIT HANDLER FOR SQLWARNING BEGIN ROLLBACK; END; START TRANSACTION; INSERT INTO rentals_archive (SELECT * FROM rentals WHERE updated_at < updateCutoff); DELETE FROM rentals WHERE updated_at < updateCutoff; COMMIT; END",
+	};
+	
+	/**
+	 * Create DB connection
+	 */
 	public RentalDatabase() {
 		try {
 			this.connection = DriverManager.getConnection(PrivateInformation.DB_URL, PrivateInformation.DB_USER, PrivateInformation.DB_PASS);
+			this.setupTriggers();
+			this.setupProcedures();
 		} catch (SQLException e) {
 			System.out.println("Connection Failed! Check the console output.");
 			e.printStackTrace();
@@ -23,143 +43,58 @@ public class RentalDatabase {
 		}
 	}
 	
+	public void setupTriggers() {
+		if (this.isConnected()) {
+			for (String trigger: triggerStrings) {
+				try {
+					Statement stmt = this.connection.createStatement();
+					stmt.execute(trigger);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void setupProcedures() {
+		if (this.isConnected()) {
+			for (String procedure: procedureStrings) {
+				try {
+					Statement stmt = this.connection.createStatement();
+					stmt.execute(procedure);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Check if DB is connected
+	 * @return
+	 */
 	public boolean isConnected() {
 		return this.connection != null;
 	}
 	
+	/**
+	 * Get DB connection
+	 * @return
+	 */
+	public Connection getConnection() {
+		return this.connection;
+	}
+	
+	/**
+	 * Attempt to close DB connection
+	 */
 	public void close() {
 		try {
-			if (this.connection != null) {
+			if (this.isConnected()) {
 				this.connection.close();
 			}
 		} catch (SQLException e) {
 			// Can't do anything here
 		}
-	}
-	
-	/**
-	 * Retrieve all games in database
-	 * @return ArrayList<VideoGame> - list of all video games
-	 */
-	public ArrayList<VideoGame> getAllGames() {
-		Statement stmt = null;
-		ArrayList<VideoGame> games = new ArrayList<>();
-		if (this.connection != null) {
-			try {
-				stmt = this.connection.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM games");
-				while (rs.next()) {
-					int gameId = rs.getInt("game_id");
-					int genreId = rs.getInt("genre_id");
-					int publisherId = rs.getInt("publisher_id");
-					int platformId = rs.getInt("platform_id");
-					int releaseYear = rs.getInt("release_year");
-					String gameName = rs.getString("game_name");
-					String gameDescription = rs.getString("game_description");
-					games.add(new VideoGame(gameId, genreId, publisherId, platformId, releaseYear, gameName, gameDescription));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				while (e != null) {
-					System.out.println("SQL Exception Code " + e.getErrorCode());
-					System.out.println("SQLState " + e.getSQLState());
-					System.out.println("Error Message " + e.getMessage());
-					e = e.getNextException();
-				}
-			} finally {
-				try {
-					if (stmt != null) {
-						stmt.close();
-					}
-				} catch (SQLException e2) {
-					// Can't do anything here
-				}
-			}
-		}
-		return games;
-	}
-	
-	/**
-	 * Retrieve all games for a specific genre name in database
-	 * @return ArrayList<VideoGame> - list of all video games
-	 */
-	public ArrayList<VideoGame> getAllGamesByGenre(String genre) {
-		Statement stmt = null;
-		ArrayList<VideoGame> games = new ArrayList<>();
-		if (this.connection != null) {
-			try {
-				stmt = this.connection.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * from games WHERE genre_id in (SELECT genre_id from genres where genre_name = '" + genre + "');");
-				while (rs.next()) {
-					int gameId = rs.getInt("game_id");
-					int genreId = rs.getInt("genre_id");
-					int publisherId = rs.getInt("publisher_id");
-					int platformId = rs.getInt("platform_id");
-					int releaseYear = rs.getInt("release_year");
-					String gameName = rs.getString("game_name");
-					String gameDescription = rs.getString("game_description");
-					games.add(new VideoGame(gameId, genreId, publisherId, platformId, releaseYear, gameName, gameDescription));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				while (e != null) {
-					System.out.println("SQL Exception Code " + e.getErrorCode());
-					System.out.println("SQLState " + e.getSQLState());
-					System.out.println("Error Message " + e.getMessage());
-					e = e.getNextException();
-				}
-			} finally {
-				try {
-					if (stmt != null) {
-						stmt.close();
-					}
-				} catch (SQLException e2) {
-					// Can't do anything here
-				}
-			}
-		}
-		return games;
-	}
-	
-	/**
-	 * Retrieve all games for a specific publisher name in database
-	 * @return ArrayList<VideoGame> - list of all video games
-	 */
-	public ArrayList<VideoGame> getAllGamesByPublisher(String publisher) {
-		Statement stmt = null;
-		ArrayList<VideoGame> games = new ArrayList<>();
-		if (this.connection != null) {
-			try {
-				stmt = this.connection.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM games, publishers WHERE games.publisher_id = publishers.publisher_id AND publishers.publisher_name = '" + publisher + "';");
-				while (rs.next()) {
-					int gameId = rs.getInt("game_id");
-					int genreId = rs.getInt("genre_id");
-					int publisherId = rs.getInt("publisher_id");
-					int platformId = rs.getInt("platform_id");
-					int releaseYear = rs.getInt("release_year");
-					String gameName = rs.getString("game_name");
-					String gameDescription = rs.getString("game_description");
-					games.add(new VideoGame(gameId, genreId, publisherId, platformId, releaseYear, gameName, gameDescription));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				while (e != null) {
-					System.out.println("SQL Exception Code " + e.getErrorCode());
-					System.out.println("SQLState " + e.getSQLState());
-					System.out.println("Error Message " + e.getMessage());
-					e = e.getNextException();
-				}
-			} finally {
-				try {
-					if (stmt != null) {
-						stmt.close();
-					}
-				} catch (SQLException e2) {
-					// Can't do anything here
-				}
-			}
-		}
-		return games;
 	}
 }
