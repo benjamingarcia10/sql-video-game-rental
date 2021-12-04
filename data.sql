@@ -57,16 +57,16 @@ INSERT INTO games (game_id, genre_id, publisher_id, release_year, game_name, gam
 
 
 -- Load user data
-INSERT INTO users (name) VALUES ("Bob");
-INSERT INTO users (name) VALUES ("Hailey");
-INSERT INTO users (name) VALUES ("Logan");
-INSERT INTO users (name) VALUES ("Paige");
-INSERT INTO users (name) VALUES ("Ian");
-INSERT INTO users (name, allowed_rentals) VALUES ("Omori", 0);
-INSERT INTO users (name, allowed_rentals) VALUES ("Aubrey", 0);
-INSERT INTO users (name, allowed_rentals) VALUES ("Kel", 0);
-INSERT INTO users (name, allowed_rentals) VALUES ("Hero", 0);
-INSERT INTO users (name, allowed_rentals) VALUES ("Basil", 0);
+INSERT INTO users (name, allowed_rentals) VALUES ("Bob", 10);
+INSERT INTO users (name, allowed_rentals) VALUES ("Hailey", 4);
+INSERT INTO users (name, allowed_rentals) VALUES ("Logan", 3);
+INSERT INTO users (name, allowed_rentals) VALUES ("Paige", 5);
+INSERT INTO users (name, allowed_rentals) VALUES ("Ian", 15);
+INSERT INTO users (name, allowed_rentals) VALUES ("Omori", 2);
+INSERT INTO users (name, allowed_rentals) VALUES ("Aubrey", 3);
+INSERT INTO users (name, allowed_rentals) VALUES ("Kel", 2);
+INSERT INTO users (name, allowed_rentals) VALUES ("Hero", 4);
+INSERT INTO users (name, allowed_rentals) VALUES ("Basil", 9);
 
 
 -- Load inventory data

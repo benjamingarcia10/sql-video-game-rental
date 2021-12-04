@@ -43,6 +43,7 @@ CREATE TABLE `inventory` (
   PRIMARY KEY (`inventory_id`),
   UNIQUE KEY `game_and_platform` (`game_id`,`platform_id`),
   KEY `platform_id` (`platform_id`),
+  CONSTRAINT `inventory_chk_1` CHECK (available_copies >= 0),
   CONSTRAINT `inventory_ibfk_3` FOREIGN KEY (`game_id`) REFERENCES `games` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `inventory_ibfk_4` FOREIGN KEY (`platform_id`) REFERENCES `platforms` (`platform_id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -69,4 +70,16 @@ CREATE TABLE `rentals` (
   KEY `inventory_id` (`inventory_id`),
   CONSTRAINT `rentals_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `rentals_ibfk_2` FOREIGN KEY (`inventory_id`) REFERENCES `inventory` (`inventory_id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Create rentals archive table
+CREATE TABLE `rentals_archive` (
+  `rental_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `inventory_id` int NOT NULL,
+  `rented_at` date NOT NULL,
+  `rental_length` int NOT NULL,
+  `is_returned` tinyint(1) NOT NULL,
+  `updated_at` timestamp NOT NULL,
+  PRIMARY KEY (`rental_id`)
 );
