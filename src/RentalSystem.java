@@ -29,7 +29,7 @@ public class RentalSystem {
 		"19. Delete a user and all their rentals (including archived)",				// Done
 		"20. View all users and their active (only unarchived) rental count",		// Done
 		"21. View users' entire rental count (including archived)",					// Done
-		"22. Archive rentals unmodified before X days ago",
+		"22. Archive rentals unmodified before X days ago",							// Done
 		"----------------------------------------",
 		"23. Exit"
 	};
