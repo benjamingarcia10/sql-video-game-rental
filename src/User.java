@@ -44,5 +44,35 @@ public class User {
 			}
 			return null;
 		}
+		
+		public static boolean updateUserById(RentalDatabase db, int userId, int newUserId, String newName, int newAllowedRentals) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("UPDATE users SET user_id = ?, name = ?, allowed_rentals = ? WHERE user_id = ?;");
+				ps.setInt(1, newUserId);
+				ps.setString(2, newName);
+				ps.setInt(3, newAllowedRentals);
+				ps.setInt(4, userId);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static boolean addUser(RentalDatabase db, String newName, int newAllowedRentals) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO users (name, allowed_rentals) VALUES (?, ?);");
+				ps.setString(1, newName);
+				ps.setInt(2, newAllowedRentals);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
