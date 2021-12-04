@@ -70,5 +70,85 @@ public class Rental {
 			}
 			return null;
 		}
+		
+		public static void getAllActiveRentalsForUser(RentalDatabase db, int userId) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT rentals.*, game_name, release_year, platform_name FROM rentals, inventory, games, platforms WHERE rentals.user_id = ? AND rentals.inventory_id = inventory.inventory_id AND games.game_id = inventory.game_id AND platforms.platform_id = inventory.platform_id AND is_returned = 0;");
+				ps.setInt(1, userId);
+				ResultSet rs = ps.executeQuery();
+				
+				int rowCount = 0;
+				while (rs.next()) {
+					rowCount++;
+					if (rowCount == 1) {
+						System.out.println("Active Rentals For User ID: " + userId);
+					}
+					System.out.printf("- Rented: %s, Due: %s | %s (%d) (%s)\n", rs.getDate("rented_at").toString(), rs.getDate("rented_at").toLocalDate().plusDays(rs.getInt("rental_length")).toString(), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"));
+				}
+				if (rowCount == 0) {
+					System.out.println("No active rentals found for user ID: " + userId);
+				}
+			}
+		}
+		
+		public static void getActiveAndAllowedRentalsForUser(RentalDatabase db, int userId) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT users.*, COUNT(rental_id) active_rentals FROM rentals, users WHERE users.user_id = ? AND rentals.user_id = users.user_id  AND rentals.is_returned = 0;");
+				ps.setInt(1, userId);
+				ResultSet rs = ps.executeQuery();
+				
+				if (rs.next()) {
+					if (rs.getString("name") == null) {
+						System.out.println("No active rentals found for user id: " + userId);
+					} else {
+						System.out.printf("User %s has %d active rental(s) out of %d allowed rental(s).\n", rs.getString("name"), rs.getInt("active_rentals"), rs.getInt("allowed_rentals"));
+					}
+				} else {
+					System.out.println("No active rentals found for user id: " + userId);
+				}
+			}
+		}
+		
+		public static int getActiveRentalsCountForUser(RentalDatabase db, int userId) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT COUNT(*) count FROM rentals WHERE rentals.user_id = ? AND is_returned = 0;");
+				ps.setInt(1, userId);
+				ResultSet rs = ps.executeQuery();
+				
+				if (rs.next()) {
+					return rs.getInt("count");
+				}
+			}
+			return 0;
+		}
+		
+		public static boolean addRentalForUserId(RentalDatabase db, int userId, int inventoryId, int rentalLength) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO rentals (user_id, inventory_id, rented_at, rental_length) VALUES (?, ?, CURRENT_DATE, ?);");
+				ps.setInt(1, userId);
+				ps.setInt(2, inventoryId);
+				ps.setInt(3, rentalLength);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static boolean returnRental(RentalDatabase db, int userId, int rentalId) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("UPDATE rentals SET is_returned = 1 WHERE user_id = ? AND rental_id = ? AND is_returned = 0;");
+				ps.setInt(1, userId);
+				ps.setInt(2, rentalId);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
