@@ -95,6 +95,23 @@ public class Game {
 			return false;
 		}
 		
+		public static boolean addGame(RentalDatabase db, int newGenreId, int newPublisherId, int newReleaseYear, String newGameName, String newGameDescription) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO games (genre_id, publisher_id, release_year, game_name, game_description) VALUES (?, ?, ?, ?, ?);");
+				ps.setInt(1, newGenreId);
+				ps.setInt(2, newPublisherId);
+				ps.setInt(3, newReleaseYear);
+				ps.setString(4, newGameName);
+				ps.setString(5, newGameDescription);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
 		/**
 		 * Helper to print games ArrayList
 		 * @param games - Games to print out
@@ -105,7 +122,7 @@ public class Game {
 			if (games.size() > 0) {
 				System.out.println(headerString);
 				for (Game game: games) {
-					System.out.printf("- ID %d: %s (%d) - %s\n", game.getGameId(), game.getGameName(), game.getReleaseYear(), game.getGameDescription());
+					System.out.printf("- Game ID %d: %s (%d) - %s\n", game.getGameId(), game.getGameName(), game.getReleaseYear(), game.getGameDescription());
 				}
 			} else {
 				System.out.println(emptyString);

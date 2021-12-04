@@ -64,9 +64,9 @@ public class Inventory {
 						System.out.println("Games Available to Rent:");
 					}
 					if (rs.getInt("available_copies") == 1) {
-						System.out.printf("- ID %d: %s (%d) (%s): %d copy available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
+						System.out.printf("- Inventory ID %d: %s (%d) (%s): %d copy available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
 					} else {
-						System.out.printf("- ID %d: %s (%d) (%s): %d copies available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
+						System.out.printf("- Inventory ID %d: %s (%d) (%s): %d copies available\n", rs.getInt("inventory_id"), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"), rs.getInt("available_copies"));
 					}
 				}
 				if (rowCount == 0) {

@@ -4,32 +4,35 @@ import java.util.Scanner;
 public class RentalSystem {
 	private static String[] validFunctionCommands = new String[] {
 		"Rental System Browsing Functions:",
-		"1. View all games",												// Done
-		"2. View games by genre",											// Done
-		"3. View games by publisher",										// Done
-		"4. View number of games released on or after a certain year",		// Done
-		"5. View games available to rent",									// Done
-		"6. Check for a specific game's availability",						// Done
+		"1. View all games",														// Done
+		"2. View games by genre",													// Done
+		"3. View games by publisher",												// Done
+		"4. View number of games released on or after a certain year",				// Done
+		"5. View games available to rent",											// Done
+		"6. Check for a specific game's availability",								// Done
 		"----------------------------------------",
 		"User Functions",
-		"7. Rent a game",													// Done
-		"8. Return a game",													// Done
-		"9. View all of user's active rentals",								// Done
-		"10. Get count of user's active and allowed rentals",				// Done
+		"7. Rent a game",															// Done
+		"8. Return a game",															// Done
+		"9. View all of user's active rentals",										// Done
+		"10. View count of user's active and allowed rentals",						// Done
 		"----------------------------------------",
 		"Rental System Admin Functions:",
-		"11. Add a publisher",
-		"12. Add a new game",
-		"13. Update a game entry",											// Done
-		"14. Add a user",
-		"15. Update a user entry",
-		"16. Add inventory",
-		"17. Delete a user and all their rentals",
-		"18. View all users and their active (including archived) rental count",
+		"11. Add a publisher",														// Done
+		"12. Add a new game",														// Done
+		"13. Update a game entry",													// Done
+		"14. Add a user",															// Done
+		"15. Update a user entry",													// Done
+		"16. View entire inventory",												
+		"17. Add inventory",														
+		"18. Update inventory",														
+		"19. Delete a user and all their rentals",									
+		"20. View all users and their active (only unarchived) rental count",
+		"21. View all users and their entire rental count (including archived)",	
 		"----------------------------------------",
-		"19. Exit"
+		"22. Exit"
 	};
-	private static int EXIT_FUNCTION_MODE = 19;
+	private static int EXIT_FUNCTION_MODE = 22;
 	
 	private static void printFunctions() {
 		System.out.println("----------------------------------------");
@@ -99,9 +102,9 @@ public class RentalSystem {
 			
 			Game game;
 			User user;
-			Inventory inventory;
-			String gameName;
-			int year, userId, activeRentals, inventoryId, rentalLength, rentalId, gameId, genreId;
+			String gameName, newGameName, newGameDescription, newUserName, newPublisherName;
+			int year, userId, inventoryId, rentalLength, rentalId, gameId;
+			int newGameId, newGenreId, newPublisherId, newReleaseYear, newUserId, newAllowedRentals;
 			
 			try {
 				// Perform actions based on user's selected function mode
@@ -144,29 +147,10 @@ public class RentalSystem {
 					case 7:
 						userId = getUserIntegerInput(in, "Enter your user id: ",
 								"You have entered an invalid number. Enter your user id: ");
-//						user = User.DatabaseOperations.getUserById(db, userId);
-//						if (user == null) {
-//							System.out.println("No user exists for user id: " + userId);
-//							break;
-//						}
-//						activeRentals = Rental.DatabaseOperations.getActiveRentalsCountForUser(db, userId);
-//						if (activeRentals >= user.getAllowedRentals()) {
-//							System.out.printf("Hello %s, you are unable to rent at this time as you have %d active rental(s) out of %d allowed rental(s)\n", user.getName(), activeRentals, user.getAllowedRentals());
-//							break;
-//						}
 						inventoryId = getUserIntegerInput(in, "Enter the inventory id you want to rent: ",
 								"You have entered an invalid number. Enter the inventory id you want to rent: ");
 						rentalLength = getUserIntegerInput(in, "Enter how long you want to rent for: ",
 								"You have entered an invalid number. Enter how long you want to rent for: ");
-//						inventory = Inventory.DatabaseOperations.getInventoryById(db, inventoryId);
-//						if (inventory == null) {
-//							System.out.println("No inventory entry exists for inventory id: " + inventoryId);
-//							break;
-//						} else if (inventory.getAvailableCopies() <= 0) {
-//							System.out.println("There are no available copies for your selected item.");
-//						} else {
-//							Rental.DatabaseOperations.addRentalForUserId(db, userId, inventoryId);
-//						}
 						System.out.println();
 						if (Rental.DatabaseOperations.addRentalForUserId(db, userId, inventoryId, rentalLength)) {
 							System.out.println("Rental successful.");
@@ -202,6 +186,33 @@ public class RentalSystem {
 						Rental.DatabaseOperations.getActiveAndAllowedRentalsForUser(db, userId);
 						System.out.println();
 						break;
+					case 11:
+						newPublisherName = getUserStringInput(in, "Enter new publisher's name: ");
+						System.out.println();
+						if (Publisher.DatabaseOperations.addPublisher(db, newPublisherName)) {
+							System.out.println("Publisher successfully added.");
+						} else {
+							System.out.println("Publisher add unsuccessful.");
+						}
+						System.out.println();
+						break;
+					case 12:
+						newGenreId = getUserIntegerInput(in, "Enter desired new game's genre id: ",
+								"You have entered an invalid number. Enter desired new game's genre id: ");
+						newPublisherId = getUserIntegerInput(in, "Enter desired new game's publisher id: ",
+								"You have entered an invalid number. Enter desired new game's publisher id: ");
+						newReleaseYear = getUserIntegerInput(in, "Enter desired new game's release year: ",
+								"You have entered an invalid number. Enter desired new game's release year: ");
+						newGameName = getUserStringInput(in, "Enter desired new game's name: ");
+						newGameDescription = getUserStringInput(in, "Enter desired new game's description: ");
+						System.out.println();
+						if (Game.DatabaseOperations.addGame(db, newGenreId, newPublisherId, newReleaseYear, newGameName, newGameDescription)) {
+							System.out.println("Game successfully added.");
+						} else {
+							System.out.println("Game add unsuccessful.");
+						}
+						System.out.println();
+						break;
 					case 13:
 						gameId = getUserIntegerInput(in, "Enter the game id you want to update: ",
 								"You have entered an invalid number. Enter the game id you want to update: ");
@@ -210,23 +221,59 @@ public class RentalSystem {
 							System.out.println("No game found for game id: " + gameId);
 							break;
 						}
-						int newGameId = getUserIntegerInput(in, "Enter desired new game id (original: " + gameId + "): ",
+						newGameId = getUserIntegerInput(in, "Enter desired new game id (original: " + gameId + "): ",
 								"You have entered an invalid number. Enter desired new game id (original: " + gameId + "): ");
-						int newGenreId = getUserIntegerInput(in, "Enter desired new genre id (original: " + game.getGenreId() +"): ",
+						newGenreId = getUserIntegerInput(in, "Enter desired new genre id (original: " + game.getGenreId() +"): ",
 								"You have entered an invalid number. Enter desired new genre id (original: " + game.getGenreId() +"): ");
-						int newPublisherId = getUserIntegerInput(in, "Enter desired new publisher id (original: " + game.getPublisherId() + "): ",
+						newPublisherId = getUserIntegerInput(in, "Enter desired new publisher id (original: " + game.getPublisherId() + "): ",
 								"You have entered an invalid number. Enter desired new publisher id (original: " + game.getPublisherId() + "): ");
-						int newReleaseYear = getUserIntegerInput(in, "Enter desired new release year (original: " + game.getReleaseYear() + "): ",
+						newReleaseYear = getUserIntegerInput(in, "Enter desired new release year (original: " + game.getReleaseYear() + "): ",
 								"You have entered an invalid number. Enter desired new release year (original: " + game.getReleaseYear() + "): ");
-						String newGameName = getUserStringInput(in, "Enter desired new game name or leave blank to keep the same (original: " + game.getGameName() + "): ");
+						newGameName = getUserStringInput(in, "Enter desired new game name or leave blank to keep the same (original: " + game.getGameName() + "): ");
 						if (newGameName.equals("")) newGameName = game.getGameName();
-						String newGameDescription = getUserStringInput(in, "Enter desired new game description or leave blank to keep the same (original: " + game.getGameDescription() + "): ");
+						newGameDescription = getUserStringInput(in, "Enter desired new game description or leave blank to keep the same (original: " + game.getGameDescription() + "): ");
 						if (newGameDescription.equals("")) newGameDescription = game.getGameDescription();
+						System.out.println();
 						if (Game.DatabaseOperations.updateGameById(db, gameId, newGameId, newGenreId, newPublisherId, newReleaseYear, newGameName, newGameDescription)) {
 							System.out.println("Game successfully updated.");
 						} else {
 							System.out.println("Game update unsuccessful.");
 						}
+						System.out.println();
+						break;
+					case 14:
+						newUserName = getUserStringInput(in, "Enter desired new user name: ");
+						newAllowedRentals = getUserIntegerInput(in, "Enter new user's allowed rentals: ",
+								"You have entered an invalid number. Enter new user's allowed rentals: ");
+						System.out.println();
+						if (User.DatabaseOperations.addUser(db, newUserName, newAllowedRentals)) {
+							System.out.println("User successfully created.");
+						} else {
+							System.out.println("User creation unsuccessful.");
+						}
+						System.out.println();
+						break;
+					case 15:
+						userId = getUserIntegerInput(in, "Enter the user id you want to update: ",
+								"You have entered an invalid number. Enter the user id you want to update: ");
+						user = User.DatabaseOperations.getUserById(db, userId);
+						if (user == null) {
+							System.out.println("No user found for user id: " + userId);
+							break;
+						}
+						newUserId = getUserIntegerInput(in, "Enter desired new user id (original: " + user.getUserId() +"): ",
+								"You have entered an invalid number. Enter desired new user id (original: " + user.getUserId() +"): ");
+						newUserName = getUserStringInput(in, "Enter desired new user name or leave blank to keep the same (original: " + user.getName() +"): ");
+						if (newUserName.equals("")) newUserName = user.getName();
+						newAllowedRentals = getUserIntegerInput(in, "Enter desired new allowed rentals (original: " + user.getAllowedRentals() +"): ",
+								"You have entered an invalid number. Enter desired new allowed rentals (original: " + user.getAllowedRentals() +"): ");
+						System.out.println();
+						if (User.DatabaseOperations.updateUserById(db, userId, newUserId, newUserName, newAllowedRentals)) {
+							System.out.println("User successfully updated.");
+						} else {
+							System.out.println("User update unsuccessful.");
+						}
+						System.out.println();
 						break;
 					default:
 						isValidFunctionMode = false;
