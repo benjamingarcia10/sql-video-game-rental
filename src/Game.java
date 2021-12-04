@@ -65,14 +65,13 @@ public class Game {
 		 * @throws SQLException 
 		 */
 		public static Game getGameById(RentalDatabase db, int gameId) throws SQLException {
-			ArrayList<Game> games = new ArrayList<>();
 			if (db.isConnected()) {
 				PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM games WHERE game_id = ?");
 				ps.setInt(1, gameId);
-				games = getGamesByPreparedStatement(ps);
-			}
-			if (games.size() > 0) {
-				return games.get(0);
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					return new Game(rs.getInt("game_id"), rs.getInt("genre_id"), rs.getInt("publisher_id"), rs.getInt("release_year"), rs.getString("game_name"), rs.getString("game_description"));
+				}
 			}
 			return null;
 		}

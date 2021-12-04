@@ -44,11 +44,9 @@ public class Inventory {
 			if (db.isConnected()) {
 				PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM inventory WHERE inventory_id = ?");
 				ps.setInt(1, inventoryId);
-				if (ps != null) {
-					ResultSet rs = ps.executeQuery();
-					if (rs.first()) {
-						return new Inventory(rs.getInt("inventory_id"), rs.getInt("game_id"), rs.getInt("platform_id"), rs.getInt("available_copies"));
-					}
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					return new Inventory(rs.getInt("inventory_id"), rs.getInt("game_id"), rs.getInt("platform_id"), rs.getInt("available_copies"));
 				}
 			}
 			return null;

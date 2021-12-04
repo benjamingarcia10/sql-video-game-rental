@@ -57,44 +57,15 @@ public class Rental {
 		 * @param db - Rental Database to retrieve data from
 		 * @param rentalId - Desired rentalId to get information for
 		 * @return Rental
+		 * @throws SQLException 
 		 */
-		public static Rental getRentalById(RentalDatabase db, int rentalId) {
+		public static Rental getRentalById(RentalDatabase db, int rentalId) throws SQLException {
 			if (db.isConnected()) {
-				try {
-					PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM rentals WHERE rental_id = ?");
-					ps.setInt(1, rentalId);
-					if (ps != null) {
-						try {
-							ResultSet rs = ps.executeQuery();
-							if (rs.first()) {
-								return new Rental(rs.getInt("rental_id"), rs.getInt("user_id"), rs.getInt("inventory_id"), rs.getDate("rented_at"), rs.getInt("rental_length"), rs.getBoolean("is_returned"), rs.getTimestamp("updated_at"));
-							}
-						} catch (SQLException e) {
-							e.printStackTrace();
-							while (e != null) {
-								System.out.println("SQL Exception Code " + e.getErrorCode());
-								System.out.println("SQLState " + e.getSQLState());
-								System.out.println("Error Message " + e.getMessage());
-								e = e.getNextException();
-							}
-						} finally {
-							try {
-								if (ps != null) {
-									ps.close();
-								}
-							} catch (SQLException e2) {
-								// Can't do anything here
-							}
-						}
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					while (e != null) {
-						System.out.println("SQL Exception Code " + e.getErrorCode());
-						System.out.println("SQLState " + e.getSQLState());
-						System.out.println("Error Message " + e.getMessage());
-						e = e.getNextException();
-					}
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM rentals WHERE rental_id = ?");
+				ps.setInt(1, rentalId);
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					return new Rental(rs.getInt("rental_id"), rs.getInt("user_id"), rs.getInt("inventory_id"), rs.getDate("rented_at"), rs.getInt("rental_length"), rs.getBoolean("is_returned"), rs.getTimestamp("updated_at"));
 				}
 			}
 			return null;

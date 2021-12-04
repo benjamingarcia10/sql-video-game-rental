@@ -31,29 +31,9 @@ public class Genre {
 			if (db.isConnected()) {
 				PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM genres WHERE genre_id = ?");
 				ps.setInt(1, genreId);
-				if (ps != null) {
-					try {
-						ResultSet rs = ps.executeQuery();
-						if (rs.first()) {
-							return new Genre(rs.getInt("genre_id"), rs.getString("genre_name"));
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
-						while (e != null) {
-							System.out.println("SQL Exception Code " + e.getErrorCode());
-							System.out.println("SQLState " + e.getSQLState());
-							System.out.println("Error Message " + e.getMessage());
-							e = e.getNextException();
-						}
-					} finally {
-						try {
-							if (ps != null) {
-								ps.close();
-							}
-						} catch (SQLException e2) {
-							// Can't do anything here
-						}
-					}
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					return new Genre(rs.getInt("genre_id"), rs.getString("genre_name"));
 				}
 			}
 			return null;

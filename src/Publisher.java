@@ -25,44 +25,15 @@ public class Publisher {
 		 * @param db - Rental Database to retrieve data from
 		 * @param publisherId - Desired publisherId to get information for
 		 * @return Publisher
+		 * @throws SQLException 
 		 */
-		public static Publisher getPublisherById(RentalDatabase db, int publisherId) {
+		public static Publisher getPublisherById(RentalDatabase db, int publisherId) throws SQLException {
 			if (db.isConnected()) {
-				try {
-					PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM publishers WHERE publisher_id = ?");
-					ps.setInt(1, publisherId);
-					if (ps != null) {
-						try {
-							ResultSet rs = ps.executeQuery();
-							if (rs.first()) {
-								return new Publisher(rs.getInt("publisher_id"), rs.getString("publisher_name"));
-							}
-						} catch (SQLException e) {
-							e.printStackTrace();
-							while (e != null) {
-								System.out.println("SQL Exception Code " + e.getErrorCode());
-								System.out.println("SQLState " + e.getSQLState());
-								System.out.println("Error Message " + e.getMessage());
-								e = e.getNextException();
-							}
-						} finally {
-							try {
-								if (ps != null) {
-									ps.close();
-								}
-							} catch (SQLException e2) {
-								// Can't do anything here
-							}
-						}
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					while (e != null) {
-						System.out.println("SQL Exception Code " + e.getErrorCode());
-						System.out.println("SQLState " + e.getSQLState());
-						System.out.println("Error Message " + e.getMessage());
-						e = e.getNextException();
-					}
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT * FROM publishers WHERE publisher_id = ?");
+				ps.setInt(1, publisherId);
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					return new Publisher(rs.getInt("publisher_id"), rs.getString("publisher_name"));
 				}
 			}
 			return null;
