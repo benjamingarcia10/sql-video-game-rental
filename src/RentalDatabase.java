@@ -22,7 +22,7 @@ public class RentalDatabase {
 		"DROP PROCEDURE IF EXISTS getGamesByPublisherName;",
 		"CREATE PROCEDURE getGamesByPublisherName(IN publisherInput VARCHAR(100)) BEGIN SELECT games.* FROM games, publishers WHERE games.publisher_id = publishers.publisher_id AND publishers.publisher_name = publisherInput; END",
 		"DROP PROCEDURE IF EXISTS archiveRentals;",
-		"CREATE PROCEDURE archiveRentals(IN updateCutoff TIMESTAMP) BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; END; DECLARE EXIT HANDLER FOR SQLWARNING BEGIN ROLLBACK; END; START TRANSACTION; INSERT INTO rentals_archive (SELECT * FROM rentals WHERE updated_at < updateCutoff); DELETE FROM rentals WHERE updated_at < updateCutoff; COMMIT; END",
+		"CREATE PROCEDURE archiveRentals(IN updateCutoff TIMESTAMP, OUT archive_count INT) BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; END; DECLARE EXIT HANDLER FOR SQLWARNING BEGIN ROLLBACK; END; START TRANSACTION; SELECT COUNT(*) INTO archive_count FROM rentals WHERE updated_at < updateCutoff; INSERT INTO rentals_archive (SELECT * FROM rentals WHERE updated_at < updateCutoff); DELETE FROM rentals WHERE updated_at < updateCutoff; COMMIT; END",
 	};
 	
 	/**

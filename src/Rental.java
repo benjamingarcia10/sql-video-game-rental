@@ -1,8 +1,10 @@
+import java.sql.CallableStatement;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 
 public class Rental {
 	private int rentalId;
@@ -208,6 +210,17 @@ public class Rental {
 					System.out.println("No rentals found.");
 				}
 			}
+		}
+		
+		public static int triggerRentalArchive(RentalDatabase db, int daysBack) throws SQLException {
+			if (db.isConnected()) {
+				CallableStatement cs = db.getConnection().prepareCall("{CALL archiveRentals(DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY), ?)}");
+				cs.setInt(1, daysBack);
+				cs.registerOutParameter(2, Types.INTEGER);
+				cs.execute();
+				return cs.getInt("archive_count");
+			}
+			return 0;
 		}
 	}
 }

@@ -29,10 +29,11 @@ public class RentalSystem {
 		"19. Delete a user and all their rentals (including archived)",				// Done
 		"20. View all users and their active (only unarchived) rental count",		// Done
 		"21. View users' entire rental count (including archived)",					// Done
+		"22. Archive rentals unmodified before X days ago",
 		"----------------------------------------",
-		"22. Exit"
+		"23. Exit"
 	};
-	private static int EXIT_FUNCTION_MODE = 22;
+	private static int EXIT_FUNCTION_MODE = 23;
 	
 	private static void printFunctions() {
 		System.out.println("----------------------------------------");
@@ -339,6 +340,14 @@ public class RentalSystem {
 					case 21:
 						System.out.println();
 						Rental.DatabaseOperations.getAllUsersRentalCountIncludingArchived(db);
+						System.out.println();
+						break;
+					case 22:
+						int daysBackToArchive = getUserIntegerInput(in, "Enter how many days back you want to archive unmodified rentals: ",
+								"You have entered an invalid number. Enter how many days back you want to archive unmodified rentals: ");
+						System.out.println();
+						int archiveCount = Rental.DatabaseOperations.triggerRentalArchive(db, daysBackToArchive);
+						System.out.println(archiveCount + " rentals archived.");
 						System.out.println();
 						break;
 					default:
