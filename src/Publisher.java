@@ -38,5 +38,18 @@ public class Publisher {
 			}
 			return null;
 		}
+		
+		public static boolean addPublisher(RentalDatabase db, String newPublisherName) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO publishers (publisher_name) values (?);");
+				ps.setString(1, newPublisherName);
+				int rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
