@@ -83,7 +83,7 @@ public class Rental {
 					if (rowCount == 1) {
 						System.out.println("Active Rentals For User ID: " + userId);
 					}
-					System.out.printf("- Rented: %s, Due: %s | %s (%d) (%s)\n", rs.getDate("rented_at").toString(), rs.getDate("rented_at").toLocalDate().plusDays(rs.getInt("rental_length")).toString(), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"));
+					System.out.printf("- Rental ID: %d | Rented: %s, Due: %s | %s (%d) (%s)\n", rs.getInt("rental_id"), rs.getDate("rented_at").toString(), rs.getDate("rented_at").toLocalDate().plusDays(rs.getInt("rental_length")).toString(), rs.getString("game_name"), rs.getInt("release_year"), rs.getString("platform_name"));
 				}
 				if (rowCount == 0) {
 					System.out.println("No active rentals found for user ID: " + userId);
