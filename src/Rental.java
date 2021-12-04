@@ -150,5 +150,60 @@ public class Rental {
 			}
 			return false;
 		}
+		
+		public static boolean deleteRentalsAndUserByUserId(RentalDatabase db, int userId) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("DELETE FROM rentals WHERE user_id = ?;");
+				ps.setInt(1, userId);
+				int rowsUpdated = ps.executeUpdate();
+				
+				ps = db.getConnection().prepareStatement("DELETE FROM users WHERE user_id = ?;");
+				ps.setInt(1, userId);
+				rowsUpdated = ps.executeUpdate();
+				
+				if (rowsUpdated > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static void getAllUsersActiveUnarchivedRentalCount(RentalDatabase db) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT users.user_id, name, COUNT(IF(is_returned = 0, 1, NULL)) active_rentals FROM users LEFT JOIN rentals ON rentals.user_id = users.user_id GROUP BY users.name;");
+				ResultSet rs = ps.executeQuery();
+				
+				int rowCount = 0;
+				while (rs.next()) {
+					rowCount++;
+					if (rowCount == 1) {
+						System.out.println("Active, Unarchived Rentals:");
+					}
+					System.out.printf("- User ID: %d | Name: %s | Active Rentals: %d\n", rs.getInt("user_id"), rs.getString("name"), rs.getInt("active_rentals"));
+				}
+				if (rowCount == 0) {
+					System.out.println("No active, unarchived rentals found.");
+				}
+			}
+		}
+		
+		public static void getAllUsersRentalCountIncludingArchived(RentalDatabase db) throws SQLException {
+			if (db.isConnected()) {
+				PreparedStatement ps = db.getConnection().prepareStatement("SELECT users.user_id, users.name, COUNT(rental_id) rental_count FROM ((SELECT * FROM rentals) UNION (SELECT * FROM rentals_archive)) combined, users WHERE combined.user_id = users.user_id GROUP BY user_id;");
+				ResultSet rs = ps.executeQuery();
+				
+				int rowCount = 0;
+				while (rs.next()) {
+					rowCount++;
+					if (rowCount == 1) {
+						System.out.println("Users' Rental Count (active and inactive, including archived rentals):");
+					}
+					System.out.printf("- User ID: %d | Name: %s | Rental Count: %d\n", rs.getInt("user_id"), rs.getString("name"), rs.getInt("rental_count"));
+				}
+				if (rowCount == 0) {
+					System.out.println("No rentals found.");
+				}
+			}
+		}
 	}
 }
