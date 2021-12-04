@@ -23,10 +23,10 @@ public class RentalSystem {
 		"13. Update a game entry",													// Done
 		"14. Add a user",															// Done
 		"15. Update a user entry",													// Done
-		"16. View entire inventory",												// 
+		"16. View entire inventory",												// Done
 		"17. Add inventory",														// 
 		"18. Update inventory",														// 
-		"19. Delete a user and all their rentals",									// Done
+		"19. Delete a user and all their rentals (including archived)",				// Done
 		"20. View all users and their active (only unarchived) rental count",		// Done
 		"21. View users' entire rental count (including archived)",					// Done
 		"----------------------------------------",
@@ -273,6 +273,11 @@ public class RentalSystem {
 						} else {
 							System.out.println("User update unsuccessful.");
 						}
+						System.out.println();
+						break;
+					case 16:
+						System.out.println();
+						Inventory.DatabaseOperations.getEntireInventory(db);
 						System.out.println();
 						break;
 					case 19:

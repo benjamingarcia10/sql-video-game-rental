@@ -157,6 +157,10 @@ public class Rental {
 				ps.setInt(1, userId);
 				int rowsUpdated = ps.executeUpdate();
 				
+				ps = db.getConnection().prepareStatement("DELETE FROM rentals_archive WHERE user_id = ?;");
+				ps.setInt(1, userId);
+				rowsUpdated = ps.executeUpdate();
+				
 				ps = db.getConnection().prepareStatement("DELETE FROM users WHERE user_id = ?;");
 				ps.setInt(1, userId);
 				rowsUpdated = ps.executeUpdate();
